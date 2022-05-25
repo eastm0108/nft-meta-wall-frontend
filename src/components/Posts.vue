@@ -15,10 +15,11 @@
       <div class="post" style="margin-top: 16px">
         <!-- 貼文擁有者資料 -->
         <div class="avatar">
-          <img v-if="post.author.avatar !== ''" class="avatar__img" :src="post.author.avatar" />
+          <img v-if="post?.author?.avatar !== ''" class="avatar__img" :src="post?.author?.avatar" />
           <img v-else class="avatar__img" src="@/assets/user5-1.png" />
           <div style="margin-left: 16px;">
             <router-link
+              v-if="post?.author?._id"
               :to="`/personal/${post.author._id}`"
               class="link"
             >{{ post.author.name }}</router-link>
@@ -80,9 +81,9 @@
           <div class="message" style="margin-top: 16px;">
             <div class="avatar">
               <img
-                v-if="comment.user.avatar !== ''"
+                v-if="comment?.user?.avatar !== ''"
                 class="avatar__img"
-                :src="comment.user.avatar"
+                :src="comment?.user?.avatar"
               />
               <img
                 v-else
@@ -91,6 +92,7 @@
               />
               <div style="margin-left: 16px">
                 <router-link
+                  v-if="comment?.user?._id"
                   :to="`/personal/${comment.user._id}`"
                   class="link"
                 >{{ comment.user.name }}</router-link>
@@ -106,8 +108,9 @@
 </template>
 
 <script>
-import { defineComponent, computed } from 'vue';
+import { defineComponent, onDeactivated, computed, onMounted } from 'vue';
 import { timeToLocalTime } from '@/utils/time';
+import { useStore } from 'vuex';
 
 export default defineComponent({
   name: 'Posts',
@@ -117,16 +120,42 @@ export default defineComponent({
     posts: {
       type: Array,
       default: () => [],
+    },
+    hasNextPage: {
+      type: Boolean,
+      default: false,
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const store = useStore();
+    const isLoading = computed(() => store.getters['ui/isLoading']);
+
     const posts = computed(() => {
       return props.posts;
     });
 
+    const hasNextPage = computed(() => {
+      return props.hasNextPage;
+    });
+
+    onMounted(() => {
+      window.addEventListener('scroll', handleScroll);
+    });
+
+    function handleScroll() {
+      
+      if (window.scrollY + window.screen.height >= document.body.scrollHeight && !isLoading.value && hasNextPage.value) {
+        emit('fetchNextPosts');
+      }
+    }
+
+    onDeactivated(() => {
+      window.removeEventListener('scroll', handleScroll);
+    });
+
     return {
       posts,
-      timeToLocalTime
+      timeToLocalTime,
     };
   }
 });

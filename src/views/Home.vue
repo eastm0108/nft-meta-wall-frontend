@@ -1,13 +1,13 @@
 <template>
   <div>
     <Searchbar :sort="storePost.timeSort" @sort="sort" @search="search" />
-    <Posts :posts="storePost.posts" />
+    <Posts :posts="storePost.posts" :hasNextPage="storePost.hasNextPage" @fetchNextPosts="fetchNextPosts" />
   </div>
 </template>
 
 
 <script>
-import { defineComponent, reactive, computed, onMounted } from 'vue';
+import { defineComponent, computed, onMounted } from 'vue';
 import { onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
 import { useStore } from 'vuex';
 import Searchbar from '@/components/Searchbar.vue';
@@ -18,7 +18,7 @@ export default defineComponent({
   name: 'Home',
   components: {
     Searchbar,
-    Posts
+    Posts,
   },
   setup(props) {
     const store = useStore();
@@ -34,11 +34,15 @@ export default defineComponent({
     });
 
     const sort = async (sortType) => {
-      await store.dispatch('post/fetchPublicPosts', { timeSort: sortType });
+      await store.dispatch('post/fetchPublicPosts', { timeSort: sortType, page: 1  });
     };
 
     const search = async (text) => {
-      await store.dispatch('post/fetchPublicPosts', { keyword: text });
+      await store.dispatch('post/fetchPublicPosts', { keyword: text, page: 1 });
+    };
+
+    const fetchNextPosts = async () => {
+      await store.dispatch('post/fetchPublicNextPosts', { page: storePost.value.page + 1 });
     };
 
     onBeforeRouteUpdate((to, from) => {
@@ -53,6 +57,7 @@ export default defineComponent({
       storePost,
       sort,
       search,
+      fetchNextPosts,
     };
   }
 });

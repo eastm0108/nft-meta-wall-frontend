@@ -6,7 +6,7 @@
       </div>
     </transition>
     <Searchbar :sort="storePost.timeSort" @sort="sort" @search="search" />
-    <Posts :posts="storePost.posts" />
+    <Posts :posts="storePost.posts" :hasNextPage="storePost.hasNextPage" @fetchNextPosts="fetchNextPosts" />
   </div>
 </template>
 
@@ -44,11 +44,15 @@ export default defineComponent({
     });
 
     const sort = async (sortType) => {
-      await store.dispatch('post/fetchPrivatePosts', { timeSort: sortType });
+      await store.dispatch('post/fetchPrivatePosts', { timeSort: sortType, page: 1 });
     };
 
     const search = async (text) => {
-      await store.dispatch('post/fetchPrivatePosts', { keyword: text });
+      await store.dispatch('post/fetchPrivatePosts', { keyword: text, page: 1 });
+    };
+
+    const fetchNextPosts = async () => {
+      await store.dispatch('post/fetchPrivateNextPosts', { page: storePost.value.page + 1 });
     };
 
     onBeforeRouteLeave((to, from) => {
@@ -69,6 +73,7 @@ export default defineComponent({
       storePost,
       sort,
       search,
+      fetchNextPosts,
     };
   }
 });
