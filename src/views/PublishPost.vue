@@ -137,7 +137,7 @@ export default defineComponent({
         file?.size && (image = await submitImage());
 
         const userId = store.getters['user/userInfo']?.id; // test
-        const { status, data } = await store.dispatch('post/addPost', { userId, content: content.value, image });
+        const { status, data } = await store.dispatch('post/addPost', { userId, content: content.value.trim(), image });
 
         if (status === 'success' && data.author) {
           router.push({ path: `/personal/${data.author}` });
