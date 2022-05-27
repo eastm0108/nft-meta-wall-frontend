@@ -57,14 +57,6 @@ export default defineComponent({
     const isLoginError = ref(false);
 
     const login = async () => {
-      console.log('loginForm', loginForm);
-      // isLoginError.value = true;
-
-      // if (isLoginError) {
-      //   console.log('登入錯誤');
-      //   return;
-      // }
-
       await store.dispatch('user/login', {...loginForm});
       router.push({ path: '/home' });
     };

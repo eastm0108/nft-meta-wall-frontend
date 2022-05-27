@@ -4,9 +4,8 @@ import { getLocalStorageToken, setLocalStorageToken, removeLocalStorageToken } f
 export const state = {
   token: getLocalStorageToken(),
   name: '',
-  id: '627fa403e11fff95efe0cde6', // test
+  id: '', // test
   avatar: '',
-  roles: [],
 };
 
 export const actions = {
@@ -14,10 +13,13 @@ export const actions = {
     async login({ commit }, userInfo) {
       try {
         const { email, password } = userInfo;
-        // const { data } = await login({ email: email.trim(), password: password });
-        const  data = { token: '123' } // 假資料
+        const { data } = await login({ email: email.trim(), password: password });
 
+        commit('SET_ID', data.id);
         commit('SET_TOKEN', data.token);
+        commit('SET_NAME', data.name);
+        commit('SET_AVATAR', data.avatar);
+
         setLocalStorageToken(data.token);
       } catch (error) {
         console.log(error);
@@ -27,10 +29,11 @@ export const actions = {
     },
     async logout({ commit, state, dispatch }) {
       try {
-        // await logout(state.token);
-
+        commit('SET_ID', '');
         commit('SET_TOKEN', '');
-        commit('SET_ROLES', []);
+        commit('SET_NAME', '');
+        commit('SET_AVATAR', '');
+
         removeLocalStorageToken();
       } catch (error) {
         console.log(error);
@@ -41,15 +44,22 @@ export const actions = {
   
     resetLocalStorageToken({ commit }) {
       return new Promise(resolve => {
+        commit('SET_ID', '');
         commit('SET_TOKEN', '');
-        commit('SET_ROLES', []);
+        commit('SET_NAME', '');
+        commit('SET_AVATAR', '');
+
         removeLocalStorageToken();
+
         resolve();
       })
     },
 };
 
 export const mutations = {
+  SET_ID: (state, id) => {
+    state.id = id;
+  },
   SET_TOKEN: (state, token) => {
     state.token = token;
   },
@@ -59,21 +69,18 @@ export const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar;
   },
-  SET_ROLES: (state, roles) => {
-    state.roles = roles;
-  }
 };
 
 export const getters = {
   isLogin: state => state.token !== '' || state.token !== null,
+  token: state => state.token,
   userInfo: (state) => {
-    const { name, id, avatar, roles } = state;
+    const { name, id, avatar } = state;
 
     return {
       name,
       id,
       avatar,
-      roles,
     };
   }
 };

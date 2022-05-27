@@ -2,7 +2,7 @@ import Mock from 'mockjs';
 export default [
   {
     // timeout: 500,
-    url: "/mock/api/login",
+    url: "/mock/api/user/login",
     method: "post",
     statusCode: 200,
     response: ({}) => {
@@ -17,7 +17,7 @@ export default [
   },
   {
     // timeout: 500,
-    url: "/mock/api/logout",
+    url: "/mock/api/user/login",
     method: "post",
     statusCode: 200,
     response: ({}) => {

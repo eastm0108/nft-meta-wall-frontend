@@ -56,7 +56,6 @@
 import { defineComponent, reactive, ref} from 'vue';
 import { useStore } from 'vuex';
 import { uploadImage } from '@/api/image.js';
-import { createPost } from '@/api/post';
 import router from '../router';
 
 export default defineComponent({
@@ -112,7 +111,7 @@ export default defineComponent({
 
         const uploadResult = await uploadImage(form);
 
-        return uploadResult?.data?.data?.link;
+        return uploadResult?.data?.imageUrl;
       } catch (error) {
         console.log(error);
       }
