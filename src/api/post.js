@@ -70,7 +70,7 @@ export function getPostById(postId) {
  */
 export function createPost(data) {
   return request({
-    url: '/posts/addPost',
+    url: '/posts/post',
     method: 'POST',
     data
   })
@@ -135,5 +135,12 @@ export function deletePost(postId) {
   return request({
     url: `/post/${postId}`,
     method: 'DELETE',
+  })
+}
+
+export function getLikedPost(data) {
+  return request({
+    url: `/posts/likedPosts`,
+    method: 'GET',
   })
 }

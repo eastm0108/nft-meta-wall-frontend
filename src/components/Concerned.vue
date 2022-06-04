@@ -14,17 +14,17 @@
         <div class="avatar">
           <img
             class="avatar__img"
-            :src="follower.userPhoto"
+            :src="follower.id.avatar"
           />
           <div style="margin-left: 16px;">
             <router-link
-              :to="`/personal/${follower.userId}`"
+              :to="`/personal/${follower.id._id}`"
               class="link"
-            >{{ follower.userName }}</router-link>
-            <p class="avatar__text">您已追蹤 {{ timeDiffNowTime(follower.createAt) }} 天！</p>
+            >{{ follower.id.userName }}</router-link>
+            <p class="avatar__text">您已追蹤 {{ timeDiffNowTime(follower.datetime_update) }} 天！</p>
           </div>
         </div>
-        <div class="concerned__text">追蹤時間：{{ timeToLocalTime(follower.createAt) }}</div>
+        <div class="concerned__text">追蹤時間：{{ timeToLocalTime(follower.datetime_update) }}</div>
       </div>
     </div>
   </div>
@@ -45,6 +45,7 @@ export default defineComponent({
     }
   },
   setup(props) {
+    console.log('props',props)
     const followers = props.followers;
 
     return {

@@ -8,7 +8,7 @@
       <ul style="margin-top:24px;">
         <li>
           <router-link
-            to="/personal/1234"
+            :to="`/personal/${userInfo.id}`"
             class="icon-btn"
           >
             <div class="avatar">

@@ -1,5 +1,7 @@
 <template>
   <div>
+      <h1>UserID: {{ $route.params.id }}</h1>
+
     <transition name="fade">
       <div v-if="!isSelf">
         <Track />
@@ -31,10 +33,11 @@ export default defineComponent({
     const store = useStore();
     const selfId = store.getters['user/userInfo']?.id;
     let id = useRoute().params?.id;
+    console.log('selfId',selfId,'id',id)
     const isSelf = ref(selfId == id);
 
     onMounted(async () => {
-      await store.dispatch('post/fetchPrivatePosts', { userId: id });
+      await store.dispatch('post/fetchPrivatePosts', { authorId: id });
     });
 
     const storePost = computed(() => {
@@ -59,9 +62,9 @@ export default defineComponent({
       if (to.params.id !== from.params.id) {
         const newId = to.params.id;
         isSelf.value = selfId == newId;
+        store.dispatch('post/fetchPrivatePosts', { authorId: newId });
       }
-
-      store.dispatch('post/fetchPrivatePosts', { userId: newId });
+        store.dispatch('post/fetchPrivatePosts', { userId: newId });
     });
 
     return {
@@ -70,7 +73,7 @@ export default defineComponent({
       sort,
       search,
     };
-  }
+  },
 });
 </script>
 

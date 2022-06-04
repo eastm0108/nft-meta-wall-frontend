@@ -32,16 +32,33 @@ export function getProfile(id) {
 
 export function updatePassword(data) {
   return request({
-    url: "/users/updatePassword",
+    url: "/users/password",
     method: "post",
     data,
   });
 }
 
-export function updateProfile(data){
+export function updateProfile(data) {
   return request({
-    url: "/users/updateProfile",
+    url: "/users/profile",
     method: "patch",
+    data,
+  });
+}
+
+
+export function getFollowers(data) {
+  return request({
+    url: "/users/followers",
+    method: "get",
+    data,
+  });
+}
+
+export function updateFollower(data) {
+  return request({
+    url: "/users/follow",
+    method: "post",
     data,
   });
 }

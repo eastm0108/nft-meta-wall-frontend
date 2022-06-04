@@ -3,13 +3,14 @@
     <div class="block-title">
       我按讚的貼文
     </div>
-    <LovePost :likePosts="likePosts"/>
+    <LovePost :likePosts="likedPosts"/>
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive , computed} from 'vue';
 import LovePost from '@/components/LovePost.vue';
+import { useStore } from 'vuex';
 
 export default defineComponent({
   name: 'LikePosts',
@@ -17,25 +18,18 @@ export default defineComponent({
     LovePost,
   },
   setup() {
-    const likePosts = reactive([
-      {
-        userName: '希琳',
-        userPhoto: 'https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1652373309671.jpg',
-        userId: '9123',
-        postId: '123',
-        createAt: '2022-05-10T17:22:10.221Z',
-      },
-      {
-        userName: '希琳',
-        userPhoto: 'https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1652373309671.jpg',
-        userId: '65423',
-        postId: '456',
-        createAt: '2022-05-10T17:22:10.221Z',
-      }
-    ]);
+    const store = useStore();
+    const likePosts = reactive();
+
+    const likedPosts = computed( () =>{
+      store.dispatch('post/getLikedPosts')
+      const data = store.getters['user/likedPosts']
+      return data
+    })
 
     return {
-      likePosts
+      likePosts,
+      likedPosts
     };
   }
 });

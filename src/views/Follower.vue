@@ -3,12 +3,14 @@
     <div class="block-title">
       追蹤名單
     </div>
-    <Concerned :followers="followers" />
+    <Concerned :followers="storeFollowerList" />
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, computed ,onMounted ,onUnmounted , ref} from 'vue';
+import { useStore } from 'vuex';
+
 import Concerned from '@/components/Concerned.vue';
 
 export default defineComponent({
@@ -17,23 +19,24 @@ export default defineComponent({
     Concerned,
   },
   setup() {
-    const followers = reactive([
-      {
-        userName: '希琳',
-        userPhoto: 'https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1652373309671.jpg',
-        userId: '9123',
-        createAt: '2022-05-10T17:22:10.221Z',
-      },
-      {
-        userName: '希琳',
-        userPhoto: 'https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1652373309671.jpg',
-        userId: '65423',
-        createAt: '2022-05-10T17:22:10.221Z',
-      }
-    ]);
+    const store = useStore();
+    const followersList = ref([])
+
+    store.dispatch('user/getFollower');
+    const storeFollowerList = computed(() => {
+      const data = store.getters['user/followerList']
+      return data;
+    });
+
+    onMounted(async () => {
+      store.dispatch('user/getFollower');
+      followersList.push(storeFollowerList);
+    });
+   
 
     return {
-      followers,
+      storeFollowerList,
+      followersList,
     };
   }
 });

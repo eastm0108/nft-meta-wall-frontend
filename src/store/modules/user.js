@@ -5,6 +5,8 @@ import {
   getProfile,
   updatePassword,
   updateProfile,
+  getFollowers,
+  updateFollower
 } from "@/api/user";
 import {
   getLocalStorageToken,
@@ -23,6 +25,8 @@ export const state = {
   avatar: "",
   roles: [],
   verifyResponse: { status: "" },
+  otherUser:{},
+  followersList: []
 };
 
 export const actions = {
@@ -128,9 +132,10 @@ export const actions = {
       const { status, data } = await getProfile(state.id);
       // console.log(status, data[0].avatar);
       // status === 'success' && (commit('SET_PROFILE', data));
-      status === true && commit("SET_AVATAR", data[0].avatar);
-      status === true && commit("SET_NAME", data[0].userName);
-      status === true && commit("SET_GENDER", data[0].gender ? data[0].gender : 'notAccess');
+      status === true && commit("SET_AVATAR", data.avatar);
+      status === true && commit("SET_NAME", data.userName);
+      status === true &&
+        commit("SET_GENDER", data.gender ? data.gender : "notAccess");
 
       // commit("SET_AVATAR", data[0].avatar);
     } catch (error) {
@@ -138,7 +143,50 @@ export const actions = {
       return error;
     }
   },
+  async getOtherUser({ commit, state, dispatch }, userId) {
+    try {
+      dispatch('ui/toggleLoading', true, { root: true });
+      console.log('getotherProfile1',userId)
+      const { status, data } = await getProfile(userId.id);
+      // status === 'success' && (commit('SET_PROFILE', data));
+      console.log('getotherProfile1 data',data)
+      status === true && commit("OTHERUSER", data);
+    
 
+      // commit("SET_AVATAR", data[0].avatar);
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  },
+  async getFollower({ commit, state }) {
+    try {
+      const { status, data } = await getFollowers(state.id);
+      // console.log(status, data[0].avatar);
+      console.log('getFollower',data[0].follow)
+      // status === 'success' && (commit('SET_PROFILE', data));
+      status === true && commit("FOLLOWERS", data[0].follow);
+
+      // commit("SET_AVATAR", data[0].avatar);
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  },
+  async updateFollower({ commit, state, dispatch },id) {
+    try {
+      console.log('sss',id)
+      const { status, data } = await updateFollower(id);
+      console.log(status, data);
+      // status === 'success' && (commit('SET_PROFILE', data));
+      // status === true && commit("FOLLOWERS", data[0].follow);
+
+      // commit("SET_AVATAR", data[0].avatar);
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  },
   resetLocalStorageToken({ commit }) {
     return new Promise((resolve) => {
       commit("SET_TOKEN", "");
@@ -179,6 +227,12 @@ export const mutations = {
   SET_DEFAULT_RESPONSE: (state) => {
     state.verifyResponse.status = "";
   },
+  OTHERUSER : (state , userData) =>{
+    state.otherUser = userData
+  },
+  FOLLOWERS : (state, followers) =>{
+    state.followersList = followers
+  }
 };
 
 export const getters = {
@@ -194,6 +248,8 @@ export const getters = {
       gender
     };
   },
+  otherUserInfo : (state) => state.otherUser,
+  followerList : (state) => state.followersList,
   verifyResponse: (state) => {
     const { verifyResponse } = state;
 
